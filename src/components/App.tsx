@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { PullRequest, getPullRequests } from '../actions'
+import { PullRequest, getPullRequests, Ratelimit } from '../actions'
 import { StoreState } from '../reducers';
 
 interface AppProps {
   pullRequests: PullRequest[]
+  ratelimits: Ratelimit;
   getPullRequests(): any;
 }
 
@@ -19,18 +20,27 @@ export class _App extends React.Component<AppProps> {
 
     const tableRows = this.props.pullRequests.map((pr) => {
       return (
-        <tr>
-          <td>{pr.user.login}</td><td>{pr.title}</td>
-        </tr>
+        <tr key={pr.id}>
+          <td data-label="Login">{pr.user.login}</td><td data-label="Title">{pr.title}</td>
+        </tr >
       )
     })
-
+    console.log(this.props.ratelimits)
 
     return (tableRows.length > 0)
       ? (
         <div>
-          <table style={{ "borderWidth": "5px", 'borderColor': "#aaaaaa", 'borderStyle': 'solid' }}>
-            {tableRows}
+          <h4>RateLimits</h4>
+          <p>Limit: {this.props.ratelimits.limit}</p>
+          <p>Remaining: {this.props.ratelimits.remaining}</p>
+          <p>Used: {this.props.ratelimits.used}</p>
+          <table className="ui celled table">
+            <thead>
+              <tr><th>Login</th><th>Title</th></tr>
+            </thead>
+            <tbody>
+              {tableRows}
+            </tbody>
           </table>
         </div >
       )
@@ -40,8 +50,9 @@ export class _App extends React.Component<AppProps> {
   }
 }
 
-const mapStateToProps = ({ pullRequests }: StoreState): { pullRequests: PullRequest[] } => {
-  return { pullRequests };
+
+const mapStateToProps = ({ pullRequests, ratelimits }: StoreState): { pullRequests: PullRequest[], ratelimits: Ratelimit } => {
+  return { pullRequests, ratelimits };
 }
 
 export const App = connect(

@@ -1,12 +1,15 @@
 import { combineReducers } from 'redux';
-import { PullRequest } from '../actions';
+import { PullRequest, Ratelimit } from '../actions';
 import { pullRequestsReducer } from './pulls';
+import { ratelimitsReducer } from './ratelimits';
 
 export interface StoreState {
   pullRequests: PullRequest[];
+  ratelimits: Ratelimit;
 }
 
 export const reducers = combineReducers<StoreState>({
-  pullRequests: pullRequestsReducer
+  pullRequests: pullRequestsReducer,
+  ratelimits: ratelimitsReducer
 });
 
